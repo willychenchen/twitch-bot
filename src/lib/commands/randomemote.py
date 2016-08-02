@@ -3,17 +3,17 @@
 import random, json
 
 def randomemote():
-	
-	filename = 'src/res/global_emotes.json'
+    
+    filename = 'src/res/global_emotes.json'
 
-	try:
-		data = json.loads(file(filename, 'r').read())
-	except:
-		return 'Error reading %s.' % filename
+    try:
+        data = json.loads(file(filename, 'r').read())
+    except:
+        return 'Error reading %s.' % filename
 
-	emote = random.choice(data.keys())
+    emote = random.choice(data.keys())
 
-	return '%s = %s' % (
-		emote,
-		emote[:1] + '​'.decode('utf8') + emote[1:]
-	)
+    return '%s = %s' % (
+        emote,
+        emote[:1] + '​'.decode('utf8') + emote[1:]
+    )
