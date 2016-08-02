@@ -8,6 +8,8 @@ import lib.irc as irc_
 from lib.functions_general import *
 import lib.functions_commands as commands
 from random import randint
+import time
+import re
 
 class Roboraj:
 
@@ -41,9 +43,20 @@ class Roboraj:
                 channel = message_dict['channel']
                 message = message_dict['message']
                 username = message_dict['username']
-
+                
                 ppi(channel, message, username)
-
+                
+                #custom triggers
+                stop = re.match('stop ([0-9]+)', message)
+                if stop:
+                    time.sleep(int(stop.group(1)))
+                    continue
+                    
+                #pause for some time to prevent hitting request limit
+                time.sleep(randint(2,4))
+                print "sending rando"
+                irc.random_chat(config['channels'][0])
+                
                 # check if message is a command with no arguments
                 if commands.is_valid_command(message) or commands.is_valid_command(message.split(' ')[0]):
                     command = message

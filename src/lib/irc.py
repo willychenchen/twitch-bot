@@ -2,11 +2,13 @@ import socket, re, time, sys
 from functions_general import *
 import cron
 import thread
+from random import randint
 
 class irc:
     
     def __init__(self, config):
         self.config = config
+        self.chats = open('chats.txt', 'r').read().split(chr(10))
 
     def check_for_message(self, data):
         if re.match(r'^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+(\.tmi\.twitch\.tv|\.testserver\.local) PRIVMSG #[a-zA-Z0-9_]+ :.+$', data):
@@ -29,7 +31,7 @@ class irc:
         return {
             'channel': re.findall(r'^:.+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+.+ PRIVMSG (.*?) :', data)[0],
             'username': re.findall(r'^:([a-zA-Z0-9_]+)\!', data)[0],
-            'message': re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', data)[0].decode('utf8')
+            'message': re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', data)[0]
         }
 
     def check_login_status(self, data):
@@ -39,7 +41,7 @@ class irc:
             return True
 
     def send_message(self, channel, message):
-        self.sock.send('PRIVMSG %s :%s\n' % (channel, message.encode('utf-8')))
+        self.sock.send('PRIVMSG %s :%s\n' % (channel, message))
 
     def get_irc_socket_object(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -88,3 +90,7 @@ class irc:
         pp('Leaving chanels %s,' % channels)
         self.sock.send('PART %s\r\n' % channels)
         pp('Left channels.')
+        
+    def random_chat(self, channel):
+        message = self.chats[randint(0, len(self.chats)-1)]
+        self.send_message(channel, message)
